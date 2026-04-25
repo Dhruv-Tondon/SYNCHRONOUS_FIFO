@@ -88,3 +88,24 @@ parameter ADDR_WIDTH = 3)(
 );
 ```
 
+## Waveform and Output
+Waveform analysis confirms correct synchronous circular buffer behavior, including simultaneous read/write operations without data loss. Design verified successfully across all tested parameter configurations.
+
+![waveform](./Output_and_waveform/waveform.png)
+![terminal](./Output_and_waveform/synchronous_fifooutput.png)
+
+## Key Learnings & Verification Techniques
+
+Building this Synchronous FIFO provided a solid foundation in sequential logic design, flow control, and circular buffer mechanics:
+
+* **Circular Buffer Implementation**
+    I learned how to manage memory addresses efficiently. By allowing the binary read and write pointers to naturally overflow back to zero, the linear memory array behaves like an infinite loop, continuously overwriting old, read data with new incoming data.
+
+* **Exact Flag Generation & Corner Cases**
+    Unlike an asynchronous FIFO where flags are pessimistic, I learned to generate exact `full, overflow ,underflow` and `empty` flags. A critical learning moment was handling the simultaneous read/write condition: if the FIFO is full and a read and write occur on the exact same clock edge, the FIFO must seamlessly accept the new data, output the old data, and remain full. 
+
+* **Status Tracking Methods**
+    I explored two different architectural approaches: using a dedicated counter to track the number of elements (easier flag logic but can be a timing bottleneck in fast designs), versus utilizing an extra bit on the pointers to distinguish between full and empty conditions when the pointer addresses match. 
+
+* **Synchronous Testbench Verification**
+    Because the entire system runs on a single clock edge, I learned how to effectively write sequential testbenches. I created targeted tasks to push data until overflow, pop data until underflow, and randomly assert read/write enables to verify absolute reliability under unpredictable data traffic.
